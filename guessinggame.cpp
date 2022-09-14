@@ -1,5 +1,7 @@
 /*
 Name: Nathan Zhou
+Project: Guessing Game
+Date: 9/14/22
 
 
 1. No global variables
@@ -14,9 +16,7 @@ Name: Nathan Zhou
 
 int main() {
   srand(time(NULL));
-  int random_num;
-  
-  int guesses_taken, guess;
+  int random_num, guesses_taken, guess;
   bool playing = true;
   while (playing) { //begin a game
     random_num = (rand() % 100) + 1; //generate the number: modulo to define range 1-100 (cplusplus.com)
