@@ -2,7 +2,8 @@
 Name: Nathan Zhou
 Date: 9/14/22
 
-Plays a guessing game where the user must guess the randomly generated number between 1 and 100, inclusive. Tells user the number of guesses and allows them to play again after winning.
+Plays a guessing game where the user must guess the randomly generated number between 1 and 100, inclusive. 
+Tells user the number of guesses and allows them to play again after winning.
 
 
 1. No global variables
