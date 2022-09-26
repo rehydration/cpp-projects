@@ -1,7 +1,7 @@
 /*
 
 Name: Nathan Zhou
-Date: 9/22/22
+Date: 9/26/22
 
 A tic-tac-toe game played locally with 2 players on the command line. Keeps track of win totals
 and restarts after the end of each game.
