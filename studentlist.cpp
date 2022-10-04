@@ -10,6 +10,7 @@ student id, and GPA. Allows the user to add and delete students and print the li
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <iomanip>
 
 struct Student { //student struct
   char fname[10], lname[10];
@@ -28,11 +29,13 @@ void add_student(std::vector<Student*>* list) { //adds a new student to the list
   std::cout << "Enter the student's GPA:\n";
   std::cin >> student->gpa;
   (*list).push_back(student); //adds Student pointer to back of vector
+  std::cout << "Student " << student->id << " has been added\n";
 }
 
 void print_students(std::vector<Student*>* list) { //prints all students in the list
   for (std::vector<Student*>::iterator it = (*list).begin(); it != (*list).end(); ++it) {
-    std::cout << (*it)->fname << " " << (*it)->lname << ", " << (*it)->id << ", " << (*it)->gpa << "\n";
+    std::cout << (*it)->fname << " " << (*it)->lname << ", " << (*it)->id << ", ";
+    std::cout << std::fixed << std::setprecision(2) << (*it)->gpa << "\n";
   }
 }
 
@@ -41,14 +44,14 @@ void delete_student(std::vector<Student*>* list) { //takes in a student id, then
   int id;
   std::cin >> id;
 
-  for (std::vector<Student*>::iterator it = (*list).begin();; it != (*list).end()) { //iterate through whole list
+  for (std::vector<Student*>::iterator it = (*list).begin(); it != (*list).end(); ++it) { //iterate through whole vector
     if ((*it)->id == id) { //matching id
       delete *it; //delete pointer
       (*list).erase(it); //delete element from vector
       return;      
     }
-    else ++it; //move up iterator
   }
+  std::cout << "Student " << id << " has been deleted\n";
 }
 
 int main() {
@@ -57,6 +60,7 @@ int main() {
   std::vector<Student*>* list; //pointer to vector of struct pointers
   
   while (running) {
+    std::cout << "Enter a command (ADD, PRINT, DELETE, QUIT):\n";
     std::cin >> input; //take in command
     if (strncmp(input, "ADD", 3) == 0) {
       add_student(list);
