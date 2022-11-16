@@ -26,7 +26,8 @@ void addMedia(std::vector<Parent*>& database) { //add an element of the requeste
   std::cout << "Media type (VIDEOGAME, MUSIC, MOVIE):\n"; //prompt for media type, title, year
   std::cin >> input;
   std::cout << "Enter the title:\n";
-  std::cin >> title;
+  std::cin.get(title, 19);
+  std::cin.get();
   std::cout << "Enter the year:\n";
   std::cin >> year;
   
@@ -34,7 +35,8 @@ void addMedia(std::vector<Parent*>& database) { //add an element of the requeste
     char* publisher = new char[20];
     char* rating = new char[5];
     std::cout << "Enter the video game publisher:\n";
-    std::cin >> publisher;
+    std::cin.get(publisher, 19);
+    std::cin.get();
     std::cout << "Enter the video game rating:\n";
     std::cin >> rating;
     database.push_back(new VideoGame(title, year, publisher, rating));
@@ -45,11 +47,13 @@ void addMedia(std::vector<Parent*>& database) { //add an element of the requeste
     int duration;
     char* publisher = new char[20];
     std::cout << "Enter the music artist:\n";
-    std::cin >> artist;
+    std::cin.get(artist, 19);
+    std::cin.get();
     std::cout << "Enter the music duration:\n";
     std::cin >> duration;
     std::cout << "Enter the music publisher:\n";
-    std::cin >> publisher;
+    std::cin.get(publisher, 19);
+    std::cin.get();
     database.push_back(new Music(title, year, artist, duration, publisher));
   }
   if (strncmp(input, "MOVIE", 5) == 0) { //entering movie, also requires director, duration, rating
@@ -57,7 +61,8 @@ void addMedia(std::vector<Parent*>& database) { //add an element of the requeste
     int duration;
     char* rating = new char[5];
     std::cout << "Enter the movie director:\n";
-    std::cin >> director;
+    std::cin.get(director, 19);
+    std::cin.get();
     std::cout << "Enter the movie duration:\n";
     std::cin >> duration;
     std::cout << "Enter the movie rating:\n";
@@ -75,7 +80,8 @@ void searchMedia(std::vector<Parent*>& database) { //given a title or year, sear
   std::cin >> input;
   std::cout << "Search query:\n";
   if (strncmp(input, "TITLE", 5) == 0) { //take in title
-    std::cin >> title;
+    std::cin.get(title, 19);
+    std::cin.get();
   }
   if (strncmp(input, "YEAR", 4) == 0) { //take in year
     std::cin >> year;
@@ -115,7 +121,7 @@ void deleteMedia(std::vector<Parent*>& database) { //given a title or year, choo
   std::cin >> input;
   std::cout << "Search query:\n";
   if (strncmp(input, "TITLE", 5) == 0) { //take in title
-    std::cin >> title;
+    std::cin.get(title, 19);
   }
   if (strncmp(input, "YEAR", 4) == 0) { //take in year
     std::cin >> year;
