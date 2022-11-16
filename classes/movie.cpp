@@ -1,3 +1,5 @@
+//Movie class
+
 #include <iostream>
 #include <cstring>
 #include "movie.h"

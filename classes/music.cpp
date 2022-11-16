@@ -10,7 +10,7 @@ Music::Music() { //empty default constructor
 Music::Music(char* newtitle, int newyear,
 	     char* newartist, int newduration, char* newpublisher) //constructor
   : Parent(newtitle, newyear), artist(newartist),
-    duration(newduration), publisher(newpublisher) { //call parent constructor & initialize
+    duration(newduration), publisher(newpublisher) { //call parent constructor, define fields
   type = new char[6];
   strcpy(type, "MUSIC");
 }
@@ -31,7 +31,7 @@ char* Music::getPublisher() { //returns publisher
   return publisher;
 }
 
-Music::~Music() { //destructor
+Music::~Music() { //destructor, delete pointers
   delete type;
   delete artist;
   delete publisher;
