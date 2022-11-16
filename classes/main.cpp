@@ -122,6 +122,7 @@ void deleteMedia(std::vector<Parent*>& database) { //given a title or year, choo
   std::cout << "Search query:\n";
   if (strncmp(input, "TITLE", 5) == 0) { //take in title
     std::cin.get(title, 19);
+    std::cin.get();
   }
   if (strncmp(input, "YEAR", 4) == 0) { //take in year
     std::cin >> year;
