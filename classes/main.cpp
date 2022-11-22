@@ -1,6 +1,6 @@
 /*
 Name: Nathan Zhou
-Date: 11-16-22
+Date: 11-22-22
 
 Creates a database of media, including video games, music, and movies. Allows for addition, searching,
 and deletion of items.
@@ -26,34 +26,32 @@ void addMedia(std::vector<Parent*>& database) { //add an element of the requeste
   std::cout << "Media type (VIDEOGAME, MUSIC, MOVIE):\n"; //prompt for media type, title, year
   std::cin >> input;
   std::cout << "Enter the title:\n";
-  std::cin.get(title, 19);
-  std::cin.get();
+  std::cin.ignore(10, '\n');
+  std::cin.getline(title, 20);
   std::cout << "Enter the year:\n";
   std::cin >> year;
+  std::cin.ignore(10, '\n');
   
   if (strncmp(input, "VIDEOGAME", 9) == 0) { //entering video game, also requires publisher, rating
     char* publisher = new char[20];
     char* rating = new char[5];
     std::cout << "Enter the video game publisher:\n";
-    std::cin.get(publisher, 19);
-    std::cin.get();
+    std::cin.getline(publisher, 20);
     std::cout << "Enter the video game rating:\n";
-    std::cin >> rating;
+    std::cin.getline(rating, 5);
     database.push_back(new VideoGame(title, year, publisher, rating));
-    
   }
   if (strncmp(input, "MUSIC", 5) == 0) { //entering music, also requires artist, duration, publisher
     char* artist = new char[20];
     int duration;
     char* publisher = new char[20];
     std::cout << "Enter the music artist:\n";
-    std::cin.get(artist, 19);
-    std::cin.get();
+    std::cin.getline(artist, 20);
     std::cout << "Enter the music duration:\n";
     std::cin >> duration;
     std::cout << "Enter the music publisher:\n";
-    std::cin.get(publisher, 19);
-    std::cin.get();
+    std::cin.ignore(10, '\n');
+    std::cin.getline(publisher, 20);
     database.push_back(new Music(title, year, artist, duration, publisher));
   }
   if (strncmp(input, "MOVIE", 5) == 0) { //entering movie, also requires director, duration, rating
@@ -61,12 +59,12 @@ void addMedia(std::vector<Parent*>& database) { //add an element of the requeste
     int duration;
     char* rating = new char[5];
     std::cout << "Enter the movie director:\n";
-    std::cin.get(director, 19);
-    std::cin.get();
+    std::cin.getline(director, 20);
     std::cout << "Enter the movie duration:\n";
     std::cin >> duration;
     std::cout << "Enter the movie rating:\n";
-    std::cin >> rating;
+    std::cin.ignore(10, '\n');
+    std::cin.getline(rating, 5);
     database.push_back(new Movie(title, year, director, duration, rating));
   }
 }
@@ -80,8 +78,8 @@ void searchMedia(std::vector<Parent*>& database) { //given a title or year, sear
   std::cin >> input;
   std::cout << "Search query:\n";
   if (strncmp(input, "TITLE", 5) == 0) { //take in title
-    std::cin.get(title, 19);
-    std::cin.get();
+    std::cin.ignore(10, '\n');
+    std::cin.getline(title, 20);
   }
   if (strncmp(input, "YEAR", 4) == 0) { //take in year
     std::cin >> year;
@@ -121,8 +119,8 @@ void deleteMedia(std::vector<Parent*>& database) { //given a title or year, choo
   std::cin >> input;
   std::cout << "Search query:\n";
   if (strncmp(input, "TITLE", 5) == 0) { //take in title
-    std::cin.get(title, 19);
-    std::cin.get();
+    std::cin.ignore(10, '\n');
+    std::cin.getline(title, 20);
   }
   if (strncmp(input, "YEAR", 4) == 0) { //take in year
     std::cin >> year;
