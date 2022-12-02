@@ -1,0 +1,33 @@
+#include "room.h"
+
+Room::Room() {
+}
+
+//connect two rooms
+void Room::setPath(char direction, Room neighbor) {
+  exits[direction] = neighbor;
+}
+
+void Room::displayItems() {
+  for (auto item : items) {
+    std::cout << "There is a " << item << " here.\n";
+  }
+}
+
+//adds an item into the list of items in the room
+void Room::setItem(char* item) {
+  items.push_back(item);
+}
+
+//user picks up item, remove from items in room
+void Room::getItem(char* taken_item) {
+  for (auto item : items) {
+    if (strcmp(item, taken_item) == 0) {
+      items.erase(item);
+      return;
+    }
+  }
+}
+
+Room::~Room() {
+}
