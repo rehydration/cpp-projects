@@ -10,7 +10,7 @@ class Room {
  public:
   Room();
   Room(int, char*);
-  void setPath(char, Room*);
+  void setPath(char, int);
   void displayDesc();
   void displayItems();
   void displayExits();
@@ -18,6 +18,7 @@ class Room {
   bool getItem(char*);
   int getExit(char);
   bool isExit(char);
+  
   ~Room();
  private:
   int id;

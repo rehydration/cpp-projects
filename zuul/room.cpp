@@ -5,12 +5,14 @@ Room::Room() {
 }
 
 //initialize room with a description
-Room::Room(char* newdesc) {
+Room::Room(int newid, char* newdesc) {
+  id = newid;
+  description = new char[50];
   strcpy(description, newdesc);
 }
 
 //connect two rooms
-void Room::setPath(char direction, Room* neighbor) {
+void Room::setPath(char direction, int neighbor) {
   exits[direction] = neighbor;
 }
 
@@ -39,8 +41,9 @@ void Room::displayExits() {
   std::cout << "\n";
 }
 
-Room* Room::getExit(char direction) {
-  std::cout << exits[direction] << "\n";
+//return the room in a given direction
+int Room::getExit(char direction) {
+  //std::cout << exits[direction] << "\n";
   return exits[direction];
 }
 
@@ -52,7 +55,7 @@ void Room::setItem(char* item) {
 //try to have the user pick up an item, remove from items in room
 bool Room::getItem(char* takenItem) {
   for (auto it = items.begin(); it != items.end(); ++it) {
-    if (strcmp(*it, takenItem) == 0) {
+    if (strcmp((*it), takenItem) == 0) {
       items.erase(it);
       return true;
     }
@@ -67,4 +70,6 @@ bool Room::isExit(char direction) {
 }
 
 Room::~Room() {
+  delete description;
+  for (auto item : items) delete item;
 }
