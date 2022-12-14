@@ -5,10 +5,11 @@ Room::Room() {
 }
 
 //initialize room with a description
-Room::Room(int newid, char* newdesc) {
+Room::Room(int newid, char* newdesc, bool newlock) {
   id = newid;
   description = new char[50];
   strcpy(description, newdesc);
+  locked = newlock;
 }
 
 //connect two rooms
@@ -25,18 +26,19 @@ void Room::displayDesc() {
 void Room::displayItems() {
   if (items.size() == 0) std::cout << "There are no items in this room.\n";
   for (auto item : items) {
-    std::cout << "There is a " << item << " here.\n";
+    std::cout << "There is a " << item.name << " here.\n";
   }
 }
 
 //print all possible directions
 void Room::displayExits() {
   std::cout << "There are exits:\n";
+  //check key values
   for (auto it = exits.begin(); it != exits.end(); ++it) {
-    if (it->first == 'N') std::cout << "NORTH\n";
-    if (it->first == 'S') std::cout << "SOUTH\n";
-    if (it->first == 'E') std::cout << "EAST\n";
-    if (it->first == 'W') std::cout << "WEST\n";
+    if (it->first == 'N') std::cout << "N\n";
+    if (it->first == 'S') std::cout << "S\n";
+    if (it->first == 'E') std::cout << "E\n";
+    if (it->first == 'W') std::cout << "W\n";
   }
   std::cout << "\n";
 }
@@ -48,14 +50,14 @@ int Room::getExit(char direction) {
 }
 
 //adds an item into the vector of items in the room
-void Room::setItem(char* item) {
+void Room::setItem(Item item) {
   items.push_back(item);
 }
 
 //try to have the user pick up an item, remove from items in room
-bool Room::getItem(char* takenItem) {
+bool Room::getItem(char* item) {
   for (auto it = items.begin(); it != items.end(); ++it) {
-    if (strcmp((*it), takenItem) == 0) {
+    if (strcmp((*it).name, item) == 0) {
       items.erase(it);
       return true;
     }
@@ -69,7 +71,12 @@ bool Room::isExit(char direction) {
   return true;
 }
 
+//return whether this room is locked
+bool Room::isLocked() {
+  return locked;
+}
+
 Room::~Room() {
   delete description;
-  for (auto item : items) delete item;
+  //for (auto item : items) delete item;
 }

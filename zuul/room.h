@@ -1,3 +1,5 @@
+//
+
 #ifndef ROOM_H
 #define ROOM_H
 #include <iostream>
@@ -9,21 +11,23 @@
 class Room {
  public:
   Room();
-  Room(int, char*);
+  Room(int, char*, bool);
   void setPath(char, int);
   void displayDesc();
   void displayItems();
   void displayExits();
-  void setItem(char*);
+  void setItem(Item);
   bool getItem(char*);
   int getExit(char);
   bool isExit(char);
+  bool isLocked();
   
   ~Room();
  private:
   int id;
   char* description;
-  std::vector<char*> items;
+  bool locked;
+  std::vector<Item> items;
   std::map<char, int> exits;
 };
 
