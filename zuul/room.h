@@ -1,4 +1,5 @@
-//
+//Room class
+//holds items, exits, locked
 
 #ifndef ROOM_H
 #define ROOM_H

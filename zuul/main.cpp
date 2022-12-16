@@ -1,8 +1,8 @@
 /*
 Name: Nathan Zhou
-Date:
+Date: 12/16/22
 
-Plays the text based adventure game Zuul. The player can move between rooms and drop/pick up items.
+Plays a text based adventure game. The player can move between rooms and drop/pick up items.
 
  */
 
@@ -21,8 +21,11 @@ void move(std::vector<Room*> rooms, char direction, int& currentRoom) {
 //if an item is in inventory, drop into current room
 bool drop(std::vector<Room*> rooms, std::vector<Item>& inventory, char* item, int currentRoom) {
   for (auto it = inventory.begin(); it != inventory.end(); ++it) {
+    //item found
     if (strcmp(item, (*it).name) == 0) {
       rooms[currentRoom]->setItem(*it);
+      
+      //remove from inventory
       inventory.erase(it);
       return true;
     }
@@ -41,26 +44,26 @@ bool held(std::vector<Item> inventory, char* item) {
 int main() {
   std::vector<Room*> rooms;
   std::vector<Item> inventory;
-  
+
+  //room initializations
   rooms.push_back(new Room(0, new char[80]{"a dimly lit room. The entrance behind has sealed shut."}, false));
-  rooms.push_back(new Room(1, new char[80]{"another dark room. "}, false));
-  rooms.push_back(new Room(2, new char[80]{"a dark room part of "}, false));
-  rooms.push_back(new Room(3, new char[80]{"another dark room"}, true));
-  rooms.push_back(new Room(4, new char[80]{"another dark room"}, false));
-  rooms.push_back(new Room(5, new char[80]{"w5"}, false));
-  rooms.push_back(new Room(6, new char[80]{"6some sort of heating room."}, false));
-  rooms.push_back(new Room(7, new char[80]{"7another dark room."}, false));
-  rooms.push_back(new Room(8, new char[80]{"8another dark room."}, false));
-  rooms.push_back(new Room(9, new char[80]{"9another da"}, false));
-  rooms.push_back(new Room(10, new char[80]{"10another dark room."}, false));
-  rooms.push_back(new Room(11, new char[80]{"11another dark room."}, false));
-  rooms.push_back(new Room(12, new char[80]{"12a storage ro"}, false));
-  rooms.push_back(new Room(13, new char[80]{"13an unfamiliar exit"}, false));
-  rooms.push_back(new Room(14, new char[80]{"14The third room"}, false));
-  rooms.push_back(new Room(15, new char[80]{"15The first room"}, false));
-  rooms.push_back(new Room(16, new char[80]{"The second room"}, false));
-  rooms.push_back(new Room(17, new char[80]{"The third room"}, false));
+  rooms.push_back(new Room(1, new char[80]{"a long, single directional hallway."}, false));
+  rooms.push_back(new Room(2, new char[80]{"the hallway still."}, false));
+  rooms.push_back(new Room(3, new char[80]{"a corner at the end of the hallway."}, false));
+  rooms.push_back(new Room(4, new char[80]{"an old storage room. A dead end."}, false));
+  rooms.push_back(new Room(5, new char[80]{"a dark room. It seems to be empty."}, false));
+  rooms.push_back(new Room(6, new char[80]{"a junction."}, false));
+  rooms.push_back(new Room(7, new char[80]{"another dark room. There's something up ahead."}, false));
+  rooms.push_back(new Room(8, new char[80]{"the middle of another long hallway."}, false));
+  rooms.push_back(new Room(9, new char[80]{"another dark room."}, false));
+  rooms.push_back(new Room(10, new char[80]{"a staircase entrance. It's unclear what's down there."}, false));
+  rooms.push_back(new Room(11, new char[80]{"an underground room. There's a worn furnace."}, false));
+  rooms.push_back(new Room(12, new char[80]{"the basement. Some valuables are here."}, false));
+  rooms.push_back(new Room(13, new char[80]{"a supply room at the end of the hallway."}, false));
+  rooms.push_back(new Room(14, new char[80]{"a backroom."}, false));
+  rooms.push_back(new Room(15, new char[80]{"front of the exit."}, true));
   
+  //connections between rooms
   rooms[0]->setPath('N', 1);
   rooms[0]->setPath('E', 5);
   rooms[1]->setPath('S', 0);
@@ -104,17 +107,18 @@ int main() {
   char keyName[20] = {"Key"};
   Item key;
   strcpy(key.name, keyName);
-  char waterName[20] = {"Water"};
-  Item water;
-  strcpy(water.name, waterName);
+  char bucketName[20] = {"Bucket"};
+  Item bucket;
+  strcpy(bucket.name, bucketName);
 
   
-  Item test;
+  //set items in rooms
   rooms[0]->setItem(torch);
-  rooms[1]->setItem(rock);
-  rooms[1]->setItem(coal);
-  rooms[1]->setItem(key);
-  inventory.push_back(test);
+  rooms[13]->setItem(rock);
+  rooms[11]->setItem(coal);
+  rooms[12]->setItem(key);
+  rooms[4]->setItem(bucket);
+
   int currentRoom = 0;
   char input[20];
   
@@ -122,6 +126,7 @@ int main() {
   bool newroom = true;
   
   while (playing) {
+    //display room info if the room changed
     if (newroom) {
       std::cout << "\nYou are in ";
       rooms[currentRoom]->displayDesc();
@@ -143,9 +148,16 @@ int main() {
 	continue;
       }
       //check if the next room is locked
-      if (rooms[rooms[currentRoom]->getExit(direction)]->isLocked() && !held(inventory, keyName)) {
-	std::cout << "The door is locked. A key is required to continue.\n";
-	continue;
+      if (rooms[rooms[currentRoom]->getExit(direction)]->isLocked()) {
+	//have key, can go
+	if (held(inventory, keyName)) {
+	  std::cout << "You found the exit and opened the door!\n----------GAME COMPLETED----------\n";
+	  playing = false;
+	}
+	else {
+	  std::cout << "The door is locked. A key is required to continue.\n";
+	  continue;
+	}
       }
       move(rooms, direction, currentRoom);
       newroom = true;

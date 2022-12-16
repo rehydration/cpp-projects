@@ -4,7 +4,7 @@
 Room::Room() {
 }
 
-//initialize room with a description
+//initialize room with id, description, lock status
 Room::Room(int newid, char* newdesc, bool newlock) {
   id = newid;
   description = new char[50];
@@ -12,7 +12,7 @@ Room::Room(int newid, char* newdesc, bool newlock) {
   locked = newlock;
 }
 
-//connect two rooms
+//add a possible exit
 void Room::setPath(char direction, int neighbor) {
   exits[direction] = neighbor;
 }
@@ -45,11 +45,10 @@ void Room::displayExits() {
 
 //return the room in a given direction
 int Room::getExit(char direction) {
-  //std::cout << exits[direction] << "\n";
   return exits[direction];
 }
 
-//adds an item into the vector of items in the room
+//adds an item into the room's vector of items
 void Room::setItem(Item item) {
   items.push_back(item);
 }
@@ -57,6 +56,7 @@ void Room::setItem(Item item) {
 //try to have the user pick up an item, remove from items in room
 bool Room::getItem(char* item) {
   for (auto it = items.begin(); it != items.end(); ++it) {
+    //item exists in room
     if (strcmp((*it).name, item) == 0) {
       items.erase(it);
       return true;
@@ -78,5 +78,4 @@ bool Room::isLocked() {
 
 Room::~Room() {
   delete description;
-  //for (auto item : items) delete item;
 }
