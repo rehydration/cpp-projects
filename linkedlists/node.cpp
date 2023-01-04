@@ -1,15 +1,33 @@
+/*
+Name:
+Date:
+
+Node class for linked list
+
+ */
+
 #include "node.h"
 
 Node::Node() {
 }
 
 Node::Node(Student* newstudent) {
-
+  student = newstudent;
 }
 
-Node::setNext(Node* newnext) {
+Node* Node::getNext() {
+  return next;
+}
+
+Student* Node::getStudent() {
+  return student;
+}
+
+void Node::setNext(Node* newnext) {
   next = newnext;
 }
 
 Node::~Node() {
+  delete student;
+  delete next;
 }
