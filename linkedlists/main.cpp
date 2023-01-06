@@ -23,6 +23,12 @@ int main() {
     current->getStudent()->display();
     current = current->getNext();
   }
+  delete first;
+  delete second;
+  delete third;
+  delete a;
+  delete b;
+  delete c;
   
   return 0;
 }

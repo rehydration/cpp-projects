@@ -1,11 +1,3 @@
-/*
-Name:
-Date:
-
-Node class for linked list
-
- */
-
 #include "node.h"
 
 Node::Node() {
@@ -28,6 +20,5 @@ void Node::setNext(Node* newnext) {
 }
 
 Node::~Node() {
-  delete student;
-  delete next;
+  next = NULL;
 }
