@@ -11,40 +11,56 @@ Linked list
 
 
 //add a student based on student id in ascending order
-void addStudent(Node* current, Node* newn) {
-  if (current->getStudent->id > id && current->getNext->getStudent->id <= id) {
-    Node* temp = current->getNext;
-    current->getNext = nw;
-    nw->getNext = temp;
+void addStudent(Node*& head, Node* current, Node* newn) {
+  //new student's id is smaller than current smallest
+  if (current->getStudent()->getID() > newn->getStudent()->getID()) {
+    newn->setNext(current);
+    head = NULL;
+    head = newn;
     return;
   }
-  else addStudent(current->getNext);
+  //reached end of list, new student id is largest
+  if (current->getNext() == NULL) {
+    current->setNext(newn);
+    return;
+  }
+  //correct nodes to be between
+  if (current->getStudent()->getID() < newn->getStudent()->getID() &&
+      current->getNext()->getStudent()->getID() >= newn->getStudent()->getID()) {
+    //Node* temp = current->getNext;
+    newn->setNext(current->getNext());
+    current->setNext(newn);
+    return;
+  }
+  addStudent(head, current->getNext(), newn);
 }
 
 //print all students in the list
 void print(Node* current) {
-  std::cout << current->getStudent << "\n";
-  if (current->getNext != NULL) {
-    print(current->getNext);
+  //std::cout << current->getStudent->display() << "\n";
+  current->getStudent()->display();
+  if (current->getNext() != NULL) {
+    print(current->getNext());
   }
 }
 
 //delete a student given their student id
 void deleteStudent(Node* current, int id) {
-  if (current->getStudent-> id == id) {
-
+  //is node to be deleted
+  if (current->getStudent()->getID() == id) {
+    Node* place;
   }
   else {
-    if (current->getNext != NULL) deleteStudent(current->getNext, id);
+    if (current->getNext() != NULL) deleteStudent(current->getNext(), id);
   }
 }
 
 //calculates the average GPA of all students in the list
 float average(Node* current, float sum, int count) {
-  sum += current->getStudent;
+  //sum += current->getStudent()->getGPA();
   ++count;
-  if (current->getNext != NULL) {
-    average(current->getNext, sum, count);
+  if (current->getNext() != NULL) {
+    average(current->getNext(), sum, count);
   }
   else {
     sum /= count;
@@ -77,7 +93,7 @@ int main() {
       Node* newn = new Node(news);
       
       if (head == NULL) head = newn;
-      else add(head, news);
+      else addStudent(head, head, newn);
     }
 
     if (strncmp(input, "PRINT", 5) == 0) {
@@ -94,10 +110,11 @@ int main() {
 
     if (strncmp(input, "AVERAGE", 7) == 0) {
       if (head == NULL) std::cout << "There are no students.\n";
-      else average(head);
+      else average(head, 0, 0);
     }
 
     if (strncmp(input, "QUIT", 4) == 0) {
+      running = false;
     }
   }
 

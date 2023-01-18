@@ -11,6 +11,7 @@ public:
   void setFname(char*);
   void setLname(char*);
   void setID(int);
+  float getID();
   void setGPA(float);
   void display();
   ~Student();

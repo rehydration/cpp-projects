@@ -26,6 +26,11 @@ void Student::setID(int newid) {
   id = newid;
 }
 
+//get student ID
+float Student::getID() {
+  return id;
+}
+
 //set student GPA
 void Student::setGPA(float newgpa) {
   gpa = newgpa;
