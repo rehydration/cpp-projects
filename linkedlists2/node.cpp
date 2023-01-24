@@ -10,7 +10,7 @@ Node::Node(Student* newStudent) {
 }
 
 Node::~Node() {
-  delete &student;
+  delete student;
   next = NULL;
 }
 

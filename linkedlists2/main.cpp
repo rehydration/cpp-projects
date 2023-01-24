@@ -15,8 +15,7 @@ void addStudent(Node*& head, Node* current, Node* newn) {
   //new student's id is smaller than current smallest
   if (current->getStudent()->getID() > newn->getStudent()->getID()) {
     newn->setNext(current);
-    head = NULL;
-    head = newn;
+    head = newn; //new first
     return;
   }
   //reached end of list, new student id is largest
@@ -27,7 +26,6 @@ void addStudent(Node*& head, Node* current, Node* newn) {
   //correct nodes to be between
   if (current->getStudent()->getID() < newn->getStudent()->getID() &&
       current->getNext()->getStudent()->getID() >= newn->getStudent()->getID()) {
-    //Node* temp = current->getNext;
     newn->setNext(current->getNext());
     current->setNext(newn);
     return;
@@ -37,7 +35,6 @@ void addStudent(Node*& head, Node* current, Node* newn) {
 
 //print all students in the list
 void print(Node* current) {
-  //std::cout << current->getStudent->display() << "\n";
   current->getStudent()->display();
   if (current->getNext() != NULL) {
     print(current->getNext());
@@ -45,27 +42,37 @@ void print(Node* current) {
 }
 
 //delete a student given their student id
-void deleteStudent(Node* current, int id) {
-  //is node to be deleted
+void deleteStudent(Node*& head, Node* current, int id) {
+  //first node should be deleted
   if (current->getStudent()->getID() == id) {
-    Node* place;
+    head = head->getNext();
+    delete current;
   }
-  else {
-    if (current->getNext() != NULL) deleteStudent(current->getNext(), id);
+  else if (current->getNext() != NULL) {
+    //next node should be deleted
+    if (current->getNext()->getStudent()->getID() == id) {
+      Node* next = current->getNext();
+      current->setNext(next->getNext());
+      delete next;
+    }
+    //continue in list
+    else {
+      deleteStudent(head, current->getNext(), id);
+    }
   }
 }
 
 //calculates the average GPA of all students in the list
 float average(Node* current, float sum, int count) {
-  //sum += current->getStudent()->getGPA();
+  sum += current->getStudent()->getGPA();
   ++count;
   if (current->getNext() != NULL) {
-    average(current->getNext(), sum, count);
+    sum = average(current->getNext(), sum, count);
   }
-  else {
+  else { //end of list, divide total sum of GPAs by number of students
     sum /= count;
-    return sum;
   }
+  return sum;
 }
 
 
@@ -75,9 +82,23 @@ int main() {
   Node* head = NULL;
   
   while (running) {
+    std::cout << "Enter a command: (ADD, DELETE, PRINT, AVERAGE, QUIT)\n";
     std::cin >> input;
+
+    if (strncmp(input, "QUIT", 4) == 0) {
+      //delete all remaining nodes
+      Node* current = head;
+      Node* prev;
+      while (current->getNext() != NULL) {
+	prev = current;
+	current = current->getNext();
+	delete prev;
+      }
+      running = false;
+    }
     
     if (strncmp(input, "ADD", 3) == 0) {
+      //get student info
       char fname[10], lname[10];
       int id;
       float gpa;
@@ -89,64 +110,39 @@ int main() {
       std::cin >> id;
       std::cout << "Enter the student's GPA:\n";
       std::cin >> gpa;
+
+      //initialize student and node
       Student* news = new Student(fname, lname, id, gpa);
       Node* newn = new Node(news);
       
+      //first node to be added
       if (head == NULL) head = newn;
+      //add normally
       else addStudent(head, head, newn);
+      std::cout << "Student " << id << " has been added to the list.\n";
+    }
+    else if (head == NULL) {
+      std::cout << "No students could be found.\n";
+      continue;
     }
 
     if (strncmp(input, "PRINT", 5) == 0) {
-      if (head == NULL) std::cout << "There are no students.\n";
-      else print(head);
+      print(head);
     }
 
     if (strncmp(input, "DELETE", 6) == 0) {
       int id;
       std::cout << "Enter the id of the student to be deleted:\n";
       std::cin >> id;
-      deleteStudent(head, id);
+      deleteStudent(head, head, id);
+      std::cout << "Student " << id << " has been removed from the list.\n";
     }
 
     if (strncmp(input, "AVERAGE", 7) == 0) {
-      if (head == NULL) std::cout << "There are no students.\n";
-      else average(head, 0, 0);
+      std::cout << "The average GPA is " << std::fixed << std::setprecision(2) << average(head, 0, 0) << "\n";
     }
 
-    if (strncmp(input, "QUIT", 4) == 0) {
-      running = false;
-    }
   }
-
-  /*
-  char name1[20] = "Bob";
-  char name2[20] = "John";
-  char name3[20] = "Johnson";
-  char name4[20] = "Smith";
-  Student* a = new Student(name1, name3, 12, 3.95);
-  Student* b = new Student(name1, name4, 19, 2.60);
-  Student* c = new Student(name2, name3, 29, 3.33);
-  
-  
-  Node* first = new Node(a);
-  Node* second = new Node(b);
-  Node* third = new Node(c);
-
-  first->setNext(second);
-  second->setNext(third);
-
-  Node* current = first;
-  while(current != NULL) {
-    current->getStudent()->display();
-    current = current->getNext();
-  }
-  delete first;
-  delete second;
-  delete third;
-  delete a;
-  delete b;
-  delete c;
-  */
   
   return 0;
 }

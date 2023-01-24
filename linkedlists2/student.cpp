@@ -3,6 +3,7 @@
 Student::Student() {
 }
 
+//constructor
 Student::Student(char* newfname, char* newlname,
 		 int newid, float newgpa) {
   strcpy(fname, newfname);
@@ -27,7 +28,7 @@ void Student::setID(int newid) {
 }
 
 //get student ID
-float Student::getID() {
+int Student::getID() {
   return id;
 }
 
@@ -36,11 +37,17 @@ void Student::setGPA(float newgpa) {
   gpa = newgpa;
 }
 
+//return student GPA
+float Student::getGPA() {
+  return gpa;
+}
+
 //print all fields of student
 void Student::display() {
   std::cout << fname << " " << lname << ", " << id << ", ";
   std::cout << std::fixed << std::setprecision(2) << gpa << "\n";
 }
 
+//destructor
 Student::~Student() {
 }

@@ -11,8 +11,9 @@ public:
   void setFname(char*);
   void setLname(char*);
   void setID(int);
-  float getID();
+  int getID();
   void setGPA(float);
+  float getGPA();
   void display();
   ~Student();
 private:
