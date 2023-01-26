@@ -1,3 +1,5 @@
+//Student class, contains first name, last name, ID, GPA
+
 #include "student.h"
 
 Student::Student() {

@@ -1,8 +1,8 @@
 /*
-Name:
-Date:
+Name: Nathan Zhou
+Date: 1/26/23
 
-Linked list
+Linked list of students that allows insertion, deletion, printing, and average GPA calculation
 
  */
 
@@ -78,23 +78,26 @@ float average(Node* current, float sum, int count) {
 
 int main() {
   char input[10];
-  bool running = true;
   Node* head = NULL;
   
-  while (running) {
+  while (true) {
     std::cout << "Enter a command: (ADD, DELETE, PRINT, AVERAGE, QUIT)\n";
     std::cin >> input;
 
     if (strncmp(input, "QUIT", 4) == 0) {
-      //delete all remaining nodes
-      Node* current = head;
-      Node* prev;
-      while (current->getNext() != NULL) {
-	prev = current;
-	current = current->getNext();
-	delete prev;
+      //delete all remaining nodes if list isn't empty
+      if (head != NULL) {
+	Node* current = head;
+	Node* prev;
+	while (current->getNext() != NULL) {
+	  prev = current;
+	  current = current->getNext();
+	  delete prev;
+	}
+	delete current;
       }
-      running = false;
+      
+      break;
     }
     
     if (strncmp(input, "ADD", 3) == 0) {
@@ -138,7 +141,7 @@ int main() {
       std::cout << "Student " << id << " has been removed from the list.\n";
     }
 
-    if (strncmp(input, "AVERAGE", 7) == 0) {
+    if (strncmp(input, "AVERAGE", 7) == 0) { //to 2 decimals
       std::cout << "The average GPA is " << std::fixed << std::setprecision(2) << average(head, 0, 0) << "\n";
     }
 
