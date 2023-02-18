@@ -20,6 +20,6 @@ void Node::setNext(Node* newnext) {
 }
 
 Node::~Node() {
-  student = NULL;
+  delete student;
   next = NULL;
 }

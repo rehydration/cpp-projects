@@ -1,5 +1,8 @@
 /*
+Nathan Zhou
+2/17/23
 
+Hash table that stores student info and can randomly generate students
  */
 
 #include "student.h"
@@ -8,7 +11,7 @@
 #include <random>
 
 //add a student to the given slot h
-void addStudent(Node** hashTable, Node* newn, int size, int h, bool& atLimit) {
+void addStudent(Node** hashTable, Node* newn, int h, bool& atLimit) {
   //slot is empty
   if (hashTable[h] == NULL) {
     hashTable[h] = newn;
@@ -23,7 +26,8 @@ void addStudent(Node** hashTable, Node* newn, int size, int h, bool& atLimit) {
     }
     current->setNext(newn);
 
-    if (count > 2) atLimit = true;
+    //last 2 nodes are not counted
+    if (count > 1) atLimit = true;
   }
 }
 
@@ -31,7 +35,6 @@ void addStudent(Node** hashTable, Node* newn, int size, int h, bool& atLimit) {
 void print(Node** hashTable, int size) {
   for (int i = 0; i < size; ++i) {
     if (hashTable[i] != NULL) { //slot is not empty
-      std::cout << i << "\n";
 
       
       Node* current = hashTable[i];
@@ -50,44 +53,36 @@ void print(Node** hashTable, int size) {
 }
 
 //delete a student given their student id
-void deleteStudent(Node** hashTable, int id, int size) {
-  for (int i = 0; i < size; ++i) {
-    Node* current = hashTable[i];
-    Node* prev = NULL;
-    while (current != NULL) { //check chain in current array slot
-      if (current->getStudent()->getID() == id) { //match
-	if (prev != NULL) prev->setNext(current->getNext());
-	else hashTable[i] = current->getNext(); //new first node in slot
-	delete current;
-	return;
-      }
-      else {
+void deleteStudent(Node** hashTable, int id, int h) {
+  Node* current = hashTable[h];
+  Node* prev = NULL;
+  while (current != NULL) {
+    if (current->getStudent()->getID() == id) { //match
+	  if (prev != NULL) prev->setNext(current->getNext());
+      else hashTable[h] = current->getNext(); //new first node in slot
+      delete current;
+      return;
+    } //otherwise not found
 	prev = current;
 	current = current->getNext();
-      }
-    }	
-
   }
 }
 
 //hash string of first name into a number up to size
-int hash(char* name, int size) {
+int hash(int id, int size) {
   unsigned int h = 0;
   unsigned int factor = 53;
-  unsigned int factorpow = 1;
+  unsigned int pow = 1;
   unsigned int mod = 1e9 + 9;
 
-  //string length
-  int len = (sizeof(name))/(sizeof(name[0]));
-			     
-  
-  for (int i = 0; i < len; ++i) {
-    h = (h + (name[i] - 'a' + 1)*factorpow) % mod; //polynomial hash
-    factorpow = (factorpow*factor) % mod;
+  //sum the products of each individual digit with the factor
+  while (id > 0) {
+    h = (h + (id % 10) * pow) % mod;
+    pow = (pow * factor) % mod;
+    id /= 10;
   }
 
   //adjust to array size
-  std::cout << h % size << "\n";
   return h % size;
 }
 
@@ -127,26 +122,22 @@ void generate(Node** hashTable, int num, int id, int size, bool& atLimit) {
     double gpa = distribution(gen);
 
     //hash
-    int index = hash(fname, size);
+    int index = hash(id, size);
 
     Student* news = new Student(fname, lname, id++, gpa);
     Node* newn = new Node(news);
 
-    addStudent(hashTable, newn, size, index, atLimit);
+    addStudent(hashTable, newn, index, atLimit);
 
   }
 }
-
-
-  
-
 
 
 int main() {
   srand(time(NULL));
   
   char input[10];
-  int id = 1;
+  int id = 100000;
   int size = 200;
   bool atLimit = false;
 
@@ -158,21 +149,34 @@ int main() {
   
   
   while (true) {
-    //need to increase array size to double
-    if (atLimit) {      
-      for (int i = 0; i < size; ++i) {
-	Node* current = hashTable[i];
+    //need to double array size and rehash
+    if (atLimit) {
+      atLimit = false;
 
+      //initialize new hash table
+      Node** newTable = new Node*[size * 2];
+      for (int i = 0; i < size * 2; ++i) newTable[i] = NULL;
+
+      //rehash and add to new hash table
+      for (int i = 0; i < size; ++i) {
+	    Node* current = hashTable[i];
+        while (current != NULL) {
+          Node* next = current->getNext();
+
+          //hash and add current
+          int newindex = hash((current->getStudent()->getID()), size*2);
+          current->setNext(NULL);
+          addStudent(newTable, current, newindex, atLimit);
+          current = next;
+          
+        }
       }
 
       size *= 2;
-     
-
-
       delete [] hashTable;
       hashTable = new Node*[size];
-      for (int i = 0; i < size; ++i) hashTable[i] = NULL;
-      atLimit = false;
+      hashTable = newTable;
+      continue;
     }
 
     
@@ -180,8 +184,16 @@ int main() {
     std::cin >> input;
 
     if (strncmp(input, "QUIT", 4) == 0) {
-      //delete all remaining nodes if list isn't empty
-      
+      //delete all remaining nodes
+      for (int i = 0; i < size; ++i) {
+        Node* current = hashTable[i];
+        while (current != NULL) {
+          Node* next = current->getNext();
+          delete current;
+          current = next;
+        }
+      }
+      delete[] hashTable;
       break;
     }
 
@@ -190,13 +202,7 @@ int main() {
       std::cout << "Enter the number of students to be generated:\n";
       std::cin >> num;
       generate(hashTable, num, id, size, atLimit);
-      id += num;
-      
-      for (int i = 0; i < size; ++i) {
-	if (hashTable[i] != NULL) {
-	  std::cout << i << " ";hashTable[i]->getStudent()->display();
-	}
-      }
+      id += num; //update current id
     }
     if (strncmp(input, "ADD", 3) == 0) {
       //get student info
@@ -215,16 +221,16 @@ int main() {
       //initialize student and node
       Student* news = new Student(fname, lname, id, gpa);
       Node* newn = new Node(news);
-      int index = hash(fname, size);
+      int index = hash(id, size);
 
-      addStudent(hashTable, newn, size, index, atLimit);
+      addStudent(hashTable, newn, index, atLimit);
     }
 
     if (strncmp(input, "DELETE", 6) == 0) {
       int id;
       std::cout << "Enter the id of the student to be deleted:\n";
       std::cin >> id;
-      deleteStudent(hashTable, id, size);
+      deleteStudent(hashTable, id, hash(id, size));
       std::cout << "Student " << id << " has been removed from the list.\n";
     }
 
