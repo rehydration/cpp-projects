@@ -1,0 +1,33 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+
+int main() {
+  int tree[101];
+  char input[10];
+  bool running = true;
+
+  
+  while (running) {
+    std::cin >> input;
+    
+    if (strncmp(input, "insert", 6) == 0) {
+      int n;
+      while (cin >> n) { //take in all input
+	
+      }
+    }
+
+    if (strncmp(input, "delete-max", 10) == 0) {
+      std::cout << "t\n";
+    }
+
+    if (strncmp(input, "quit", 4) == 0) {
+      running = false;
+    }
+  }
+  
+
+  return 0;
+}
