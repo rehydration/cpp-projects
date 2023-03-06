@@ -1,0 +1,17 @@
+//binary tree node
+
+#ifndef BTN_H
+#define BTN_H
+
+class BTNode {
+public:
+  int get_value();
+private:
+  BTNode left, right;
+
+};
+
+
+
+
+#endif
