@@ -5,55 +5,59 @@
 #include <iostream>
 #include <cstring>
 #include <cctype>
-#include "btnode.h"
+#include "btn.h"
 
 
+//node for linked list stack/queue
 struct Node {
   char data;
-  bool empty;
+  BTNode* tree;
   Node* next = nullptr;
 };
 
 //stack functions
 
-void push(Node*& head, char t) {
-  
-  Node* newh = new Node;
-  newh->data = t;
-  newh->empty = false;
+//add new node to front
+void push(Node*& head, Node*& newh) {
   if (head != nullptr) newh->next = head;
   head = newh;
-
-  //std::cout << head->data << " " << head->empty << " " << (head->next == nullptr) << "\n";
-
 }
 
+//delete top node and return value
 char pop(Node*& head) {
-  //if (head->empty) std::cout << "No items remaining\n";
-  
   Node* temp = head;
   char value = temp->data;
-  head = head->next;
-  //if (head == nullptr) head->empty = true;
-
+  head = head->next; //set new head
   delete temp;
   return value;
 }
 
-Node* peek(Node*& head) {
-  return head;
+//delete top node and return binary tree node
+BTNode* pop_node(Node*& head) {
+  Node* temp = head;
+  BTNode* tree = new BTNode;
+  tree = head->tree;
+  head = head->next;
+  delete temp;
+  return tree;
+}
+
+//return top node's value if it exists
+char peek(Node*& head){
+  char c = (head == nullptr ? ' ' : head->data);
+  return c;
 }
 
 
 //queue functions
 
+
 void enqueue(Node*& head, Node*& end, char t) {
 
   Node* newn = new Node;
   newn->data = t;
-  newn->empty = false;
   
-  if (head == nullptr) { //first node
+  if (head == nullptr) { //first node to be added
     head = newn;
   }
   else end->next = newn;
@@ -70,21 +74,48 @@ char dequeue(Node*& head) {
 }
 
 
+//binary expression tree transversal
+
+
+void infix(BTNode* node) {
+  if (node->is_oper()) { //
+    std::cout << "( ";
+  }
+
+  if (!node->is_empty()) infix(node->get_left());
+  std::cout << node->get_value() << " ";
+  if (!node->is_empty()) infix(node->get_right());
+  if (node->is_oper()) {
+    std::cout << ") ";
+  }
+}
+
+//
+void postfix(BTNode* node) {
+  if (!node->is_empty()) {
+    postfix(node->get_left());
+    postfix(node->get_right());
+  }
+  std::cout << node->get_value() << " ";
+}
+
+void prefix(BTNode* node) {
+  std::cout << node->get_value() << " ";
+  if (!node->is_empty()) {
+    prefix(node->get_left());
+    prefix(node->get_right());
+  }
+}
+
+
 int main() {
   Node* stack_head = nullptr;
   Node* queue_head = nullptr;
   Node* queue_end = nullptr;
-  //BTNode* tree_head;
-  
-  /*stack_head->empty = true;
-  queue_head->empty = true;
-  queue_end->empty = true;
-  */
-  //bool running = true;
-  
+
+  char token;
   std::cout << "Enter an expression: (end with 'x')\n";
   while (true) {
-    char token;
     std::cin >> token;
 
     if (token == 'x') break;
@@ -93,22 +124,121 @@ int main() {
       enqueue(queue_head, queue_end, token);
       //std::cout << token << " " << queue_head->data << "\n";
     }
-    else { //push operators to stack
-      push(stack_head, token);
+    else { //push parenthesis and operators to stack
+      
+      switch (token) {
+      case '(': //add
+	{
+	  Node* newn = new Node;
+	  newn->data = token;
+	  push(stack_head, newn);
+	  break;
+	}
+      case ')':
+	{
+	  char c;
+	  while (stack_head != nullptr) { //pop stack until right paren
+	    c = pop(stack_head);
+	    if (c == '(') break;
+	    enqueue(queue_head, queue_end, c);
+	  }
+	  break;
+	}
+      case '+':
+	{
+	  while (peek(stack_head) == '-' || peek(stack_head) == '*'
+		 || peek(stack_head) == '/' || peek(stack_head) == '^') { //pop higher power operators to queue
+	    enqueue(queue_head, queue_end, pop(stack_head));
+	  }
+	  //add
+	  Node* newn = new Node;
+	  newn->data = token;
+	  push(stack_head, newn);
+	  break;
+	}
+      case '-':
+	{
+	  while (peek(stack_head) == '+' || peek(stack_head) == '*'
+		 || peek(stack_head) == '/' || peek(stack_head) == '^') {
+	    enqueue(queue_head, queue_end, pop(stack_head));
+	  }
+	  Node* newn = new Node;
+	  newn->data = token;
+	  push(stack_head, newn);
+	  break;
+	}
+      case '*':
+	{
+	  while (peek(stack_head) == '/' || peek(stack_head) == '^') {
+	    enqueue(queue_head, queue_end, pop(stack_head));
+	  }
+	  Node* newn = new Node;
+	  newn->data = token;
+	  push(stack_head, newn);
+	  break;
+	}
+      case '/':
+	{
+	  while (peek(stack_head) == '*' || peek(stack_head) == '^') {
+	    enqueue(queue_head, queue_end, pop(stack_head));
+	  }
+	  Node* newn = new Node;
+	  newn->data = token;
+	  push(stack_head, newn);
+	  break;
+	}
+      case '^':
+	{
+	  Node* newn = new Node;
+	  newn->data = token;
+	  push(stack_head, newn);
+	  break;
+	}
+      }
     }
+  }
+  while (stack_head != nullptr) { //add remaining operators to output queue for postfix notation
+    enqueue(queue_head, queue_end, pop(stack_head));
+  }
 
+  std::cout << "Postfix: ";
+  //build binary expression tree
+  while (queue_head != nullptr) {
+    char symbol = dequeue(queue_head);
+
+    //output the postfix expression
+    std::cout << symbol << " ";
+    
+    if (std::isdigit(symbol)) { //operand
+      BTNode* newt = new BTNode(symbol, false);
+      Node* newn = new Node;
+      newn->tree = newt;
+      push(stack_head, newn);
+    }
+    else { //operator
+      BTNode* newt = new BTNode(symbol, true);
+      //left and right children are last nodes on stack
+      newt->set_right(pop_node(stack_head));
+      newt->set_left(pop_node(stack_head));
+      newt->set_empty();
+
+      //readd to stack
+      Node* newn = new Node;
+      newn->tree = newt;
+      push(stack_head, newn);
+    }
   }
-  //std::cout << pop(stack_head);
-  //std::cout << stack_head->data << " " << stack_head->next->data;
+  BTNode* tree = stack_head->tree;
+  char input[10];
   
-  while (stack_head != nullptr) {
-    std::cout << pop(stack_head) << "\n";
-    //h = h->next;
+  while (true) {
+    std::cout << "\nEnter a command (prefix, infix, postfix, quit):\n";
+    std::cin >> input;
+
+    if (!strncmp(input, "quit", 4)) break;
+    if (!strncmp(input, "prefix", 6)) prefix(tree);
+    if (!strncmp(input, "infix", 5)) infix(tree);
+    if (!strncmp(input, "postfix", 7)) postfix(tree);
   }
-  
-  //std::cout << queue_head->data << "\n";
-  while (queue_head != nullptr) std::cout << dequeue(queue_head) << "\n";
-  
-  
-  return 0;
+
 }

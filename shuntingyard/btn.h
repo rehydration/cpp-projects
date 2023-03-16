@@ -6,11 +6,21 @@
 class BTNode {
 public:
   BTNode();
-  int get_value();
+  BTNode(char, bool);
+  bool is_oper();
+  bool is_empty();
+  void set_empty();
+  void set_left(BTNode*);
+  void set_right(BTNode*);
+  BTNode* get_left();
+  BTNode* get_right();
+  char get_value();
   ~BTNode();
 private:
-  BTNode left, right;
+  BTNode* left;
+  BTNode* right;
   bool oper;
+  bool empty = true;
   char value;
 };
 
