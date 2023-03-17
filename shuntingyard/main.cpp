@@ -1,5 +1,10 @@
 /*
 
+Nathan Zhou
+3/17/23
+
+Shunting yard program to convert between prefix, postfix, and infix
+
  */
 
 #include <iostream>
@@ -51,7 +56,7 @@ char peek(Node*& head){
 
 //queue functions
 
-
+//add new node to back of queue
 void enqueue(Node*& head, Node*& end, char t) {
 
   Node* newn = new Node;
@@ -64,6 +69,7 @@ void enqueue(Node*& head, Node*& end, char t) {
   end = newn;
 }
 
+//delete top node and return value
 char dequeue(Node*& head) {
   Node* temp = head;
   char value = temp->data;
@@ -76,13 +82,13 @@ char dequeue(Node*& head) {
 
 //binary expression tree transversal
 
-
+//in order transversal
 void infix(BTNode* node) {
-  if (node->is_oper()) { //
+  if (node->is_oper()) { //parens around every expression
     std::cout << "( ";
   }
 
-  if (!node->is_empty()) infix(node->get_left());
+  if (!node->is_empty()) infix(node->get_left()); //further nodes exist
   std::cout << node->get_value() << " ";
   if (!node->is_empty()) infix(node->get_right());
   if (node->is_oper()) {
@@ -90,7 +96,7 @@ void infix(BTNode* node) {
   }
 }
 
-//
+//post order transversal
 void postfix(BTNode* node) {
   if (!node->is_empty()) {
     postfix(node->get_left());
@@ -99,6 +105,7 @@ void postfix(BTNode* node) {
   std::cout << node->get_value() << " ";
 }
 
+//pre order transversal
 void prefix(BTNode* node) {
   std::cout << node->get_value() << " ";
   if (!node->is_empty()) {
@@ -114,15 +121,14 @@ int main() {
   Node* queue_end = nullptr;
 
   char token;
-  std::cout << "Enter an expression: (end with 'x')\n";
+  std::cout << "Enter an expression: (end with '.')\n";
   while (true) {
     std::cin >> token;
 
-    if (token == 'x') break;
+    if (token == '.') break;
 
     if (std::isdigit(token)) { //push numbers to output queue
       enqueue(queue_head, queue_end, token);
-      //std::cout << token << " " << queue_head->data << "\n";
     }
     else { //push parenthesis and operators to stack
       
