@@ -11,38 +11,73 @@ struct BTNode {
   int value;
 };
 
+//insert a new node into tree
 void insert(BTNode*& root, BTNode* n) {
   BTNode* prev = nullptr;
   BTNode* curr = root;
   while (curr != nullptr) {
     prev = curr;
     if (n->value > curr->value)
-      curr = curr->right;
+      curr = curr->right; //larger values on right, smaller on left
     else curr = curr->left;
   }
   n->parent = prev;
-  if (prev == nullptr) root = n;
+  if (prev == nullptr) root = n; //first node, set root
   else if (n->value > prev->value) prev->right = n;
   else prev->left = n;
 }
 
-void remove(BTNode*& root) {
 
-  //if (!n->left && !n->right) { //leaf node
-    
-  //}
- 
-}
-
-bool search(BTNode*& root, int value) {
+//check if an element exists in tree
+BTNode* search(BTNode*& root, int value) {
   BTNode* current = root;
   while (current != nullptr && current->value != value) {
     if (current->value > value) current = current->left;
     else current = current->right;
   }
-  return current->value == value;
+  return current;
 }
 
+
+//replace node with child
+void shift(BTNode*& root, BTNode* del, BTNode* rep) {
+  if (del->parent == nullptr) root = rep;
+  if (del == (del->parent->left)) del->parent->left = rep;
+  if (del == del->parent->right) del->parent->right = rep;
+  if (rep != nullptr) rep->parent = del->parent;
+  
+}
+
+//
+void remove(BTNode*& root, BTNode* node) {
+
+  if (node->left == nullptr) { //right child exists or leaf node
+    shift(root, node, node->right);
+  }
+  else if (node->right == nullptr) { //left child only
+    shift(root, node, node->left);
+  }
+
+  else { //node has two children
+    BTNode* successor = node->right; //find smallest node greater than node to be deleted
+    while (successor->right != nullptr) successor = successor->right;
+    if (successor->parent != node) { //successor is not immediate right child
+      shift(root, node, node->right);
+      successor->right = node->right;
+      successor->right->parent = successor;
+    }
+    else { //immediate right child
+      shift(root, node, successor);
+      successor->left = node->left;
+      successor->left->parent = successor;
+    }
+  }
+  delete node;
+}
+
+
+
+//print out the tree
 void display(BTNode* current, int depth) {
   if (current->right != nullptr) display(current->right, depth+1);
   else {
@@ -106,7 +141,9 @@ int main() {
 
     }
     if (strncmp(input, "remove", 6) == 0) {
-      //remove(tree);
+      std::cout << "Enter the number to be removed:\n";
+      std::cin >> n;
+      remove(root, search(root, n));
     }
     if (strncmp(input, "search", 6) == 0) {
       std::cout << "Enter the number you are looking for:\n";
