@@ -28,7 +28,7 @@ void insert(BTNode*& root, BTNode* n) {
 }
 
 
-//check if an element exists in tree
+//find an element in tree
 BTNode* search(BTNode*& root, int value) {
   BTNode* current = root;
   while (current != nullptr && current->value != value) {
@@ -39,16 +39,16 @@ BTNode* search(BTNode*& root, int value) {
 }
 
 
-//replace node with child
+//replace node and set position of new node
 void shift(BTNode*& root, BTNode* del, BTNode* rep) {
   if (del->parent == nullptr) root = rep;
-  if (del == (del->parent->left)) del->parent->left = rep;
-  if (del == del->parent->right) del->parent->right = rep;
+  if (del == (del->parent->left)) del->parent->left = rep; //deleted node is left
+  if (del == del->parent->right) del->parent->right = rep; //deleted node is right
   if (rep != nullptr) rep->parent = del->parent;
   
 }
 
-//
+//remove a specific node
 void remove(BTNode*& root, BTNode* node) {
 
   if (node->left == nullptr) { //right child exists or leaf node
@@ -60,18 +60,18 @@ void remove(BTNode*& root, BTNode* node) {
 
   else { //node has two children
     BTNode* successor = node->right; //find smallest node greater than node to be deleted
-    while (successor->right != nullptr) successor = successor->right;
+    while (successor->left != nullptr) successor = successor->left;
     if (successor->parent != node) { //successor is not immediate right child
-      shift(root, node, node->right);
+      shift(root, successor, successor->right);
       successor->right = node->right;
       successor->right->parent = successor;
     }
-    else { //immediate right child
-      shift(root, node, successor);
-      successor->left = node->left;
-      successor->left->parent = successor;
-    }
+    //immediate right child
+    shift(root, node, successor);
+    successor->left = node->left;
+    successor->left->parent = successor;
   }
+  std::cout << root->value << "\n";
   delete node;
 }
 
@@ -131,24 +131,31 @@ int main() {
     }
     ifs.close();
   }
-
+    
   bool running = true;
   while (running) {
     std::cout << "Enter a command (add, remove, search, print, quit):\n";
     std::cin >> input;
 
     if (strncmp(input, "add", 3) == 0) {
-
+      std::cout << "Enter the number to be added:\n";
+      std::cin >> n;
+      BTNode* newn = new BTNode();
+      newn->value = n;
+      insert(root, newn);
+      std::cout << n << " added to tree\n";
     }
     if (strncmp(input, "remove", 6) == 0) {
       std::cout << "Enter the number to be removed:\n";
       std::cin >> n;
       remove(root, search(root, n));
+      std::cout << n << " removed from tree\n";
     }
     if (strncmp(input, "search", 6) == 0) {
       std::cout << "Enter the number you are looking for:\n";
       std::cin >> n;
-      std::cout << search(root, n) << "\n";
+      if (!search(root, n)) std::cout << n << " is not in the tree\n";
+      else std::cout << n << " is in the tree\n";
     }
     if (strncmp(input, "print", 6) == 0) {
       display(root, 0);
