@@ -1,4 +1,9 @@
+/* 
+Nathan Zhou
+4/7/23
 
+Binary search tree implementation with parent nodes, based on Wikipedia
+*/
 
 #include <iostream>
 #include <fstream>
@@ -27,7 +32,6 @@ void insert(BTNode*& root, BTNode* n) {
   else prev->left = n;
 }
 
-
 //find an element in tree
 BTNode* search(BTNode*& root, int value) {
   BTNode* current = root;
@@ -38,14 +42,17 @@ BTNode* search(BTNode*& root, int value) {
   return current;
 }
 
-
 //replace node and set position of new node
 void shift(BTNode*& root, BTNode* del, BTNode* rep) {
-  if (del->parent == nullptr) root = rep;
-  if (del == (del->parent->left)) del->parent->left = rep; //deleted node is left
-  if (del == del->parent->right) del->parent->right = rep; //deleted node is right
   if (rep != nullptr) rep->parent = del->parent;
   
+  if (del->parent == nullptr) { //deleting root
+    root = rep;
+    return;
+  }
+  
+  if (del == (del->parent->left)) del->parent->left = rep; //deleted node is left
+  if (del == del->parent->right) del->parent->right = rep; //deleted node is right
 }
 
 //remove a specific node
@@ -71,11 +78,8 @@ void remove(BTNode*& root, BTNode* node) {
     successor->left = node->left;
     successor->left->parent = successor;
   }
-  std::cout << root->value << "\n";
   delete node;
 }
-
-
 
 //print out the tree
 void display(BTNode* current, int depth) {
@@ -164,8 +168,5 @@ int main() {
       running = false;
     }
   }
-  
   return 0;
-
-
 }
